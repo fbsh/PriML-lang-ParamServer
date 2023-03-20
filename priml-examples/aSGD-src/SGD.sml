@@ -1,13 +1,11 @@
-(* Gradient descent algorithm for linear regression *)
-
 (* Define a type alias for a 2D point *)
 type point = real * real
 
 (* Calculate the mean of a list of real numbers *)
 fun mean (nums : real list) : real =
   let
-    val sum = List.foldl (op +) 0.0 nums
-    val length = real (List.length nums)
+		val sum = List.foldl (op +) 0.0 nums
+		val length = real (List.length nums)
 	in
 		sum / length
 	end
