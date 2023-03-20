@@ -1,3 +1,5 @@
+(* Gradient descent algorithm for linear regression *)
+
 (* Define a type alias for a 2D point *)
 type point = real * real
 
