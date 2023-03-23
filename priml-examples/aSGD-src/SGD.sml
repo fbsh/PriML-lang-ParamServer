@@ -41,12 +41,12 @@ fun gradient_descent (data : point list) (m_init : real) (b_init : real) (learni
     loop (m_init, b_init, iterations)
   end
 
-val data_points = [(1.0, 2.0), (2.0, 3.0), (3.0, 5.0), (4.0, 7.0), (5.0, 9.0)]
+val data_points = [(1.0, 2.0), (2.0, 4.0), (3.0, 6.0), (4.0, 8.0)]
 val m_init = 1.0
 
 val b_init = 0.0
 val learning_rate = 0.01
-val iterations = 10000000
+val iterations = 1000
 
 val (m, b) = gradient_descent data_points m_init b_init learning_rate iterations
 
