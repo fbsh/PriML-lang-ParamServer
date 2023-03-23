@@ -1,3 +1,5 @@
+structure T = Timer
+
 (* Define a type alias for a 2D point *)
 type point = real * real
 
@@ -6,7 +8,7 @@ fun mean (nums : real list) : real =
   let
     val sum = List.foldl (op +) 0.0 nums
     val length = real (List.length nums)
-  in
+  in7
     sum / length
   end
 
@@ -82,5 +84,13 @@ fun parallel_gradient_descent (data : point list) (m_init : real) (b_init : real
     loop (m_init, b_init, iterations)
   end
 
+val start_time = T.startRealTimer()
+
 val data = [(1.0, 2.0), (2.0, 4.0), (3.0, 6.0), (4.0, 8.0)]
-val (m, b) = parallel_gradient_descent data 0.0 0.0 0.01 1000 4
+val (m, b) = parallel_gradient_descent data 0.0 0.0 0.01 1000000 4
+
+val running_time = T.checkRealTimer start_time
+
+val _ = print ("Running time: " ^ Real.toString (Time.toReal running_time) ^ " seconds\n")
+val _ = print ("Running time: " ^ Real.toString (Time.toReal running_time * 1000.0) ^ " milliseconds\n")
+val _ = print ("Running time: " ^ Real.toString (Time.toReal running_time * 1000000.0) ^ " microseconds\n")

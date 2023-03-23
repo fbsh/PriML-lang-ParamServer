@@ -1,3 +1,5 @@
+structure T = Timer
+
 (* Define a type alias for a 2D point *)
 type point = real * real
 
@@ -46,7 +48,16 @@ val m_init = 1.0
 
 val b_init = 0.0
 val learning_rate = 0.01
-val iterations = 1000
+val iterations = 1000000
+
+val start_time = T.startRealTimer()
 
 val (m, b) = gradient_descent data_points m_init b_init learning_rate iterations
+
+val running_time = T.checkRealTimer start_time
+val _ = print ("Running time: " ^ Real.toString (Time.toReal running_time) ^ " seconds\n")
+val _ = print ("Running time: " ^ Real.toString (Time.toReal running_time * 1000.0) ^ " milliseconds\n")
+val _ = print ("Running time: " ^ Real.toString (Time.toReal running_time * 1000000.0) ^ " microseconds\n")
+
+
 
