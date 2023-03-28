@@ -8,7 +8,7 @@ fun mean (nums : real list) : real =
   let
     val sum = List.foldl (op +) 0.0 nums
     val length = real (List.length nums)
-  in7
+  in
     sum / length
   end
 
