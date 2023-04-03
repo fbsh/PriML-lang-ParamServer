@@ -59,3 +59,35 @@ functor Make (Digest: DIGEST) = struct
       IntMap.app f' (#map m)
     end
 end
+
+
+(* Load the Make functor and Digest signature *)
+structure SampleDigest: DIGEST = struct
+  type t = string
+  fun string s = s
+end
+
+structure SampleConsistentHash = Make(SampleDigest)
+
+(* Test functions *)
+fun testConsistentHashing () =
+  let
+    val ch = SampleConsistentHash.make ()
+    val ch = SampleConsistentHash.add ("node1", "Node 1", 1) ch
+    val ch = SampleConsistentHash.add ("node2", "Node 2", 1) ch
+    val ch = SampleConsistentHash.add ("node3", "Node 3", 1) ch
+
+    val keys = ["key1", "key2", "key3", "key4", "key5"]
+
+    fun testKey key =
+      let
+        val node = SampleConsistentHash.find key ch
+      in
+        print (String.concat ["Key '", key, "' assigned to ", node, "\n"])
+      end
+  in
+    List.app testKey keys
+  end
+
+(* Run the test *)
+val _ = testConsistentHashing ()
