@@ -381,10 +381,10 @@ int main(int argc, char const *argv[]) {
   int iter=atoi(argv[5]);
   
 
-    // Suggested values for grid search, to execute grid, uncomment the following two lines
+  // Suggested values for grid search, to execute grid, uncomment the following two lines
   //double lrs[10] = {0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0};
   //double loss[10] = {0};
-   // Assign a specific learning rate. If grid is used, comment following two lines
+  // Assign a specific learning rate. If grid is used, comment following two lines
   double lrs[1] = {0.003};
   double loss[1] = {0};
 
