@@ -1,0 +1,95 @@
+(* Define priority levels *)
+priority network_update_p
+
+(* Set fairness values *)
+fairness network_update_p 100
+
+
+(* Initialize the weight matrix *)
+fun initialize_weights (patterns: real array array) : real array array =
+  let
+    val pattern_count = Array.length patterns
+    val pattern_size = Array.length (Array.sub (patterns, 0))
+    val weights = Array.array (pattern_size, Array.array (pattern_size, 0.0))
+
+    (* Update the weights based on the patterns *)
+    fun update_weights () =
+      let
+        fun update_weight i j =
+          if i = j then
+            Array.update (Array.sub (weights, i), j, 0.0)
+          else
+            let
+              val sum = ref 0.0
+              fun pattern_contribution k =
+                sum := !sum + (Array.sub (Array.sub (patterns, k), i)) * (Array.sub (Array.sub (patterns, k), j))
+              in
+                List.tabulate (pattern_count, pattern_contribution);
+                Array.update (Array.sub (weights, i), j, !sum / real pattern_count)
+              end
+      in
+        Array.tabulate (pattern_size, fn i => Array.tabulate (pattern_size, fn j => update_weight i j))
+      end
+  in
+    update_weights ()
+  end
+
+(* Update a single neuron *)
+fun update_neuron (state: real array) (weights: real array array) (i: int) : real =
+  let
+    val size = Array.length state
+    val activation = ref 0.0
+
+    fun update_activation j =
+      activation := !activation + Array.sub (state, j) * Array.sub (Array.sub (weights, i), j)
+
+  in
+    List.tabulate (size, update_activation);
+    if !activation >= 0.0 then 1.0 else -1.0
+  end
+
+(* Update the network state *)
+fun update_state[p] (state: real array) : real array cmd[p] =
+  let
+    val network_size = Array.length state
+    fun update_neuron_cmd i : real cmd[p] = cmd[p] { ret (update_neuron state i) }
+  in
+    Array.tabulate (network_size, fn i => cmd[p] { spawn[p] { do (update_neuron_cmd i) } })
+  end
+
+(* Train the Hopfield network using PriML primitives *)
+fun train_hopfield_network[p] (patterns: real array array) (iterations: int) : unit cmd[p] =
+  let
+    (* Initialize the weight matrix *)
+    val _ = initialize_weights patterns
+
+    (* Main training loop *)
+    fun train_loop (state: real array) (iter: int) : unit cmd[p] =
+      if iter = 0 then
+        cmd[p] { ret () }
+      else
+        let
+          val new_state = cmd[p] { do (update_state state) }
+        in
+          train_loop new_state (iter - 1)
+        end
+  in
+    (* Initialize the network state *)
+    val initial_state = Array.array (Array.length (Array.sub (patterns, 0)), 0.0)
+
+    (* Start the training loop *)
+    cmd[p] { do (train_loop initial_state iterations) }
+  end
+
+
+(* Sample patterns *)
+val pattern1 = Array.fromList [1.0, -1.0, 1.0, -1.0]
+val pattern2 = Array.fromList [-1.0, 1.0, -1.0, 1.0]
+
+val patterns = Array.array (2, pattern1)
+val _ = Array.update (patterns, 1, pattern2)
+
+main
+{
+  do ([network_update_p]train_hopfield_network patterns 10)
+}
