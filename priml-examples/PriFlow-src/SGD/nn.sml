@@ -122,7 +122,7 @@ val data : (real A.array * real A.array) list = ListPair.zip (inputs, targets)
 
 (* Set training parameters *)
 val learning_rate = 0.1
-val iterations = 10000000
+val iterations = 100000
 val num_threads = 4
 
 (* Train the neural network *)
