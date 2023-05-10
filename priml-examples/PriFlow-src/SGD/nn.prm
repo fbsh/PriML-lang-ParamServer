@@ -1,0 +1,31 @@
+(* Declare the priorities *)
+priority high_p
+priority low_p
+order low_p < high_p
+
+fun parallel_gradient_descent (data : (real A.array * real A.array) list) (learning_rate : real) (iterations : int) (num_threads : int) : unit =
+  let
+    fun loop (iter) =
+      if iter = 0 then
+        ()
+      else
+        let
+          (* Divide data into chunks *)
+          val data_chunks = divide_data data num_threads
+
+          (* Perform backpropagation for each chunk in parallel *)
+          val _ = cmd[high_p] 
+          { 
+              tasks <- List.map (fn chunk => 
+                          spawn[low_p] 
+                          { 
+                              ret (List.map (fn (input, target) => backpropagation input target) chunk) 
+                          }) data_chunks;
+              _ <- List.map sync tasks
+          }
+        in
+          loop (iter - 1)
+        end
+  in
+    loop (iterations)
+  end
