@@ -3,7 +3,7 @@ structure V = Vector
 
 (* Define the neural network's architecture *)
 val input_size = 2
-val hidden_size = 1
+val hidden_size = 3
 val output_size = 1
 
 (* Initialize the weights and biases *)
@@ -54,26 +54,14 @@ fun backpropagation (input : real A.array) (target : real A.array) : unit =
 
     (* Update the weights and biases for the output layer *)
     val _ = List.tabulate (output_size, fn i => A.update (b2, i, A.sub (b2, i) + A.sub (output_error, i)))
-    val _ = List.tabulate (hidden_size, fn j => A.update (W2, j, A.array (1, A.sub (A.sub (W2, j), 0) + A.sub (output_error, 0) * A.sub (hidden_output, j))))
+    val _ = List.tabulate (hidden_size, fn j => A.update (W2, j, A.fromList [A.sub (A.sub (W2, j), 0) + A.sub (output_error, 0) * A.sub (hidden_output, j)]))
 
     (* Update the weights and biases for the hidden layer *)
     val _ = List.tabulate (hidden_size, fn i => A.update (b1, i, A.sub (b1, i) + A.sub (hidden_error, i)))
-    val _ = List.tabulate (input_size, fn i => A.update (W1, i, A.array (1, A.sub (A.sub (W1, i), 0) + A.sub (input, i) * A.sub (hidden_error, 0))))
+    val _ = List.tabulate (input_size, fn i => A.update (W1, i, A.fromList [A.sub (A.sub (W1, i), 0) + A.sub (input, i) * A.sub (hidden_error, 0)]))
   in
     ()
   end
-
-fun slice (lst, start, len) =
-    let
-        fun take (0, _) = []
-          | take (_, []) = []
-          | take (n, x::xs) = x :: take (n - 1, xs)
-        fun drop (0, lst) = lst
-          | drop (_, []) = []
-          | drop (n, _::xs) = drop (n - 1, xs)
-    in
-        take (len, drop (start, lst))
-    end
 
 (* Divide the data into chunks *)
 fun divide_data (data : (real array * real array) list) (num_chunks : int) : (real array * real array) list list =
@@ -113,6 +101,7 @@ fun parallel_gradient_descent (data : (real A.array * real A.array) list) (learn
     loop (iterations)
   end
 
+
 (* Sample training data *)
 val inputs : real A.array list = [A.fromList [0.0, 0.0], A.fromList [0.0, 1.0], A.fromList [1.0, 0.0], A.fromList [1.0, 1.0]]
 val targets : real A.array list = [A.fromList [0.0], A.fromList [1.0], A.fromList [1.0], A.fromList [0.0]]
@@ -122,7 +111,7 @@ val data : (real A.array * real A.array) list = ListPair.zip (inputs, targets)
 
 (* Set training parameters *)
 val learning_rate = 0.1
-val iterations = 10000000
+val iterations = 10000
 val num_threads = 4
 
 (* Train the neural network *)
@@ -133,3 +122,4 @@ val predictions = List.map (fn input => feedforward input) inputs
 
 (* Print predictions *)
 val _ = List.map (fn prediction => print ("Prediction: " ^ (Real.toString (A.sub (prediction, 0))) ^ "\n")) predictions
+
