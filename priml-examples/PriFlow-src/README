@@ -1,0 +1,16 @@
+# for ./async-demo
+
+```
+
+docker build -t hogwild .
+docker run -it --rm --name demo hogwild
+
+```
+
+# for ./SGD
+
+```
+sml lr.sml
+sml nn.sml
+
+```

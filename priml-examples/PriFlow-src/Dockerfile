@@ -25,7 +25,7 @@ WORKDIR /app
 COPY . /app
 
 # Build your Standard ML project with MLton (assuming you have a main file named "main.sml")
-RUN mlton test.sml
+RUN mlton main.sml
 
 # Set the compiled binary as the entry point for the container
 CMD ["./main"]
