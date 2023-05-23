@@ -10,5 +10,4 @@ docker run -it --rm --name demo hogwild
 ```
 sml lr.sml
 sml nn.sml
-
 ```
