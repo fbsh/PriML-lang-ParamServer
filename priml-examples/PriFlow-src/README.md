@@ -5,7 +5,7 @@ docker build -t hogwild .
 docker run -it --rm --name demo hogwild
 ```
 
-1. running linear regression and neural network trainning task with SGD algorithm in './SGD'
+2. running linear regression and neural network trainning task with SGD algorithm in './SGD'
 
 ```
 sml lr.sml
