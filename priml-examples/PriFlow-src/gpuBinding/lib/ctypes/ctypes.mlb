@@ -1,0 +1,6 @@
+local
+  ../defs.mlb 
+  ./ctypes.sml
+in
+  structure CTYPES
+end
